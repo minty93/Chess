@@ -32,8 +32,7 @@ class SlidingPiece < Piece
       y = (direction.last * i)  + current_pos.last
       possible_move = [x, y]
 
-      piece_color = hits_piece?(possible_move)
-      case piece_color
+      case hits_piece?(possible_move)
       when false
         directions << possible_move
         next
