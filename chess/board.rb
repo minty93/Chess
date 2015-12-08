@@ -2,6 +2,7 @@ require_relative 'piece'
 require_relative 'Exceptions'
 
 class Board
+  attr_accessor :selected_piece
   attr_reader :grid
 
   def initialize
@@ -19,16 +20,25 @@ class Board
 
   def move(start, end_pos)
 
-    valid_move?(start)
+    valid_piece?(start)
+    possible_moves = self[*start].moves(self, start)
+    valid_move?(end_pos, possible_moves)
 
     self[*end_pos] = self[*start]
     self[*start] = nil
 
     rescue NoPieceAtStartError => e
       puts "Please select a piece."
+    rescue InvalidMoveError => e
+      puts "Cannot move piece to that position"
   end
 
-  def valid_move?(start)
+  def valid_move?(desired_move, possible_moves)
+    raise InvalidMoveError unless possible_moves.include?(desired_move)
+
+  end
+
+  def valid_piece?(start)
     raise NoPieceAtStartError if self[*start].nil?
   end
 
@@ -39,17 +49,25 @@ class Board
 
   private
     def populate
-      (0..1).each do |i|
-        8.times do |j|
-          self[j, i] = Piece.new(:black)
-        end
+      8.times do |j|
+        self[j, 1] = Pawn.new(:black)
+        self[j, 6] = Pawn.new(:white)
       end
 
-      (6..7).each do |i|
-        8.times do |j|
-          self[j, i] = Piece.new(:cyan)
-        end
-      end
+      @grid[0] = populate_pieces(:black, 0)
+      @grid[7] = populate_pieces(:white, 7)
+    end
 
+    def populate_pieces(color, row)
+      [
+        Rook.new(color),
+        Knight.new(color),
+        Bishop.new(color),
+        Queen.new(color),
+        King.new(color),
+        Bishop.new(color),
+        Knight.new(color),
+        Rook.new(color)
+      ]
     end
 end

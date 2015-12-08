@@ -34,9 +34,9 @@ module Cursorable
   def get_input
     key = KEYMAP[read_char]
     handle_key(key)
-    rescue OutofBoardError => e
-      puts "Please stay within bounds"
-    retry
+    rescue OutOfBoardError => e
+      #puts "Please stay within bounds"
+      retry
   end
 
   def handle_key(key)
@@ -44,8 +44,9 @@ module Cursorable
     when :ctrl_c
       exit 0
     when :return, :space
+      board.move(selected_pos.reverse, cursor_pos.reverse) if selected
       toggle_selected
-      update_pos(MOVES[key])
+      nil
     when :left, :right, :up, :down
       update_pos(MOVES[key])
       nil
@@ -55,7 +56,8 @@ module Cursorable
   end
 
   def toggle_selected
-    @selected = (@selected == true) ? false : true
+    @selected     = selected ? false : true
+    @selected_pos = selected ? cursor_pos : nil
   end
 
   def read_char

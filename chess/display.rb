@@ -6,12 +6,13 @@ require_relative 'board'
 class Display
   include Cursorable
 
-  attr_reader :board
+  attr_reader :board, :cursor_pos, :selected, :selected_pos
 
   def initialize(board)
     @board = board
     @cursor_pos = [0, 0]
     @selected = false
+    @selected_pos = nil
   end
 
   def build_grid
@@ -26,7 +27,7 @@ class Display
       if piece
         piece.to_s.colorize(color_options)
       else
-        "  ".colorize(color_options)
+        "   ".colorize(color_options)
       end
     end
   end
@@ -39,14 +40,12 @@ class Display
     else
       bg = :light_gray
     end
-    color = board[j, i].nil? ? :black : board[j, i].color
-    { background: bg, color: color }
+    #color = board[j, i].nil? ? :black : :black
+    { background: bg, color: :black }
   end
 
   def render
     system("clear")
-    puts "Fill the grid!"
-    puts "Arrow keys, WASD, or vim to move, space or enter to confirm."
     build_grid.each { |row| puts row.join }
   end
 end
