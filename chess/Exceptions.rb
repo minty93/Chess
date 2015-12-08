@@ -4,5 +4,8 @@ end
 class NoPieceAtStartError < StandardError
 end
 
-class InvalidMoveError < StandardError
+class IllegalMoveError < StandardError
+end
+
+class KingInCheckError < StandardError
 end

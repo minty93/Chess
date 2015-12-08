@@ -2,7 +2,8 @@ require 'byebug'
 
 
 class Piece
-  attr_reader :color, :board, :current_pos
+  attr_reader :color # :board :current_pos
+  attr_accessor :current_pos, :board
 
   def initialize(color)
     @color = color
@@ -11,7 +12,7 @@ class Piece
   def moves(board, pos)
     @board = board
     @current_pos = pos
-    move_dirs
+    valid_moves
   end
 
   def hits_piece?(move)
@@ -29,6 +30,9 @@ class Piece
       moves.concat(get_direction(delta))
     end
 
+    moves.select! do |move|
+      move.all? {|coord| coord.between?(0,7)}
+    end
     moves
   end
 
@@ -38,7 +42,15 @@ class Piece
 
   def valid_moves
     possible_moves = move_dirs
+    possible_moves.reject! do |move|
+      board_state = board.dup
+  
+      board_state[*move] = board_state[*current_pos]
+      board_state[*current_pos] = nil
+      board_state.in_check?(color)
+    end
 
-
+    raise KingInCheckError if possible_moves.empty?
+    possible_moves
   end
 end

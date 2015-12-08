@@ -24,20 +24,21 @@ class Board
 
     valid_piece?(start)
     possible_moves = self[*start].moves(self, start)
-    valid_move?(end_pos, possible_moves)
+    legal_move?(end_pos, possible_moves)
 
     self[*end_pos] = self[*start]
     self[*start] = nil
 
     rescue NoPieceAtStartError => e
       puts "Please select a piece."
-    rescue InvalidMoveError => e
+    rescue IllegalMoveError => e
       puts "Cannot move piece to that position"
+    rescue KingInCheckError => e
+      puts "Your King will be in check"
   end
 
-  def valid_move?(desired_move, possible_moves)
-    raise InvalidMoveError unless possible_moves.include?(desired_move)
-
+  def legal_move?(desired_move, possible_moves)
+    raise IllegalMoveError unless possible_moves.include?(desired_move)
   end
 
   def valid_piece?(start)
@@ -56,7 +57,7 @@ class Board
     opposing_moves.include?(king_pos)
   end
 
-  def in_checkmate?(color)
+  def checkmate?(color)
     return false unless in_check?(color)
     pieces = find_pieces(color)
     pieces.each do |piece_pos|
@@ -83,7 +84,10 @@ class Board
       all_possible_moves = []
 
       pieces.each do |piece_pos|
-        all_possible_moves += self[*piece_pos].moves(self, piece_pos)
+        duped_board = dup
+        duped_board[*piece_pos].board = duped_board
+        duped_board[*piece_pos].current_pos = piece_pos
+        all_possible_moves += duped_board[*piece_pos].move_dirs
       end
         all_possible_moves
     end
