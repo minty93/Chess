@@ -49,7 +49,42 @@ class Board
     true
   end
 
-  private
+  def in_check?(color)
+    opposing_color = color == :black ? :white : :black
+    king_pos = find_king(color)
+    opposing_moves = find_moves_of(opposing_color)
+    opposing_moves.include?(king_pos)
+  end
+
+ private
+    def find_king(color)
+      grid.each.with_index do |row, i|
+        row.each.with_index do |pos, j|
+          return [j, i] if pos.class == King && pos.color == color
+        end
+      end
+    end
+
+    def find_moves_of(color)
+      pieces = find_pieces(color)
+      all_possible_moves = []
+
+      pieces.each do |piece_pos|
+        all_possible_moves += self[*piece_pos].moves(self, piece_pos)
+      end
+        all_possible_moves
+    end
+
+    def find_pieces(color)
+      piece_positions = []
+      grid.each.with_index do |row, i|
+        row.each.with_index do |pos, j|
+          piece_positions << [j, i] if pos && pos.color == color
+        end
+      end
+      piece_positions
+    end
+
     def populate
       8.times do |j|
         self[j, 1] = Pawn.new(:black)
@@ -72,4 +107,5 @@ class Board
         Rook.new(color)
       ]
     end
+
 end
