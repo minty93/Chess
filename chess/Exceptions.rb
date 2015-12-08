@@ -1,4 +1,4 @@
-class OutofBoardError < StandardError
+class OutOfBoardError < StandardError
 end
 
 class NoPieceAtStartError < StandardError

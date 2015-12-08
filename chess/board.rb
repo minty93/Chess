@@ -33,7 +33,7 @@ class Board
   end
 
   def in_bounds?(pos)
-    raise OutofBoardError unless pos.all? { |coord| coord.between?(0, 7) }
+    raise OutOfBoardError unless pos.all? { |coord| coord.between?(0, 7) }
     true
   end
 

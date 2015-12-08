@@ -17,25 +17,32 @@ class Piece
     self.class.to_s
   end
 
-end
-
-class SlidingPiece < Piece
-
   def hits_piece?(move)
     board[*move].nil? ? false : board[*move].color
   end
 
-  def get_direction(deltas)
+  def move_dirs
+    moves = []
+    self.class::DELTAS.each do |delta|
+      moves += get_direction(delta)
+    end
+
+    moves
+  end
+end
+
+class SlidingPiece < Piece
+
+  def get_direction(delta)
     directions = []
     (1..7).each do |i|
-      x = (direction.first * i) + current_pos.first
-      y = (direction.last * i)  + current_pos.last
+      x = (delta.first * i) + current_pos.first
+      y = (delta.last * i)  + current_pos.last
       possible_move = [x, y]
 
       case hits_piece?(possible_move)
       when false
         directions << possible_move
-        next
       when self.color
         break
       else
@@ -51,35 +58,63 @@ end
 class Bishop < SlidingPiece
   DELTAS = [ [-1, -1], [-1, 1], [1, -1], [1, 1] ]
 
-
-  def move_dirs
-    moves = []
-    DELTAS.each do |direction|
-      moves += get_direction(direction)
-    end
-
-    moves
-  end
-
 end
 
 class Rook < SlidingPiece
+  DELTAS = [ [-1, 0], [0, -1], [1, 0], [0, 1] ]
 
 end
 
 class Queen < SlidingPiece
+  DELTAS = [
+  [-1, -1],
+  [-1,  1],
+  [ 1, -1],
+  [ 1,  1],
+  [-1,  0],
+  [ 0, -1],
+  [ 1,  0],
+  [ 0,  1]
+  ]
 
 end
 
 class SteppingPiece < Piece
 
+
+  def get_direction(step)
+    x = delta.first + current_pos.first
+    y = delta.last  + current_pos.last
+    possible_move = [x, y]
+
+    hits_piece?(possible_move) != self.color ? [possible_move] : []
+  end
 end
 
 class Knight < SteppingPiece
-
+  DELTAS = [
+  [-1, -2],
+  [-1,  2],
+  [ 1, -2],
+  [ 1,  2],
+  [-2, -1],
+  [-2,  1],
+  [ 2, -1],
+  [ 2,  1]
+  ]
 end
 
 class King < SteppingPiece
+  DELTAS = [
+  [-1, -1],
+  [-1,  1],
+  [ 1, -1],
+  [ 1,  1],
+  [-1,  0],
+  [ 0, -1],
+  [ 1,  0],
+  [ 0,  1]
+  ]
 
 end
 

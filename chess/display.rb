@@ -50,14 +50,3 @@ class Display
     build_grid.each { |row| puts row.join }
   end
 end
-
-if __FILE__ == $PROGRAM_NAME
-  b = Board.new()
-  d = Display.new(b)
-
-  result = nil
-  until result
-    d.render
-    result = d.get_input
-  end
-end

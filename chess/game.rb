@@ -11,9 +11,7 @@ class Game
   end
 
   def run
-
-      display.render
-
+    display.render
   end
 
 end
