@@ -19,16 +19,25 @@ class Piece
   end
 
   def hits_piece?(move)
+    board.in_bounds?(move)
+
     board[*move].nil? ? false : board[*move].color
+
+    rescue OutOfBoardError => e
+      false
   end
 
   def move_dirs
     moves = []
     self.class::DELTAS.each do |delta|
-      moves += get_direction(delta)
+      moves.concat(get_direction(delta))
     end
 
     moves
+  end
+
+  def inspect
+    to_s
   end
 end
 
@@ -98,6 +107,8 @@ class SteppingPiece < Piece
     y = delta.last  + current_pos.last
     possible_move = [x, y]
 
+    debugger
+
     hits_piece?(possible_move) != self.color ? [possible_move] : []
   end
 end
@@ -138,17 +149,12 @@ class King < SteppingPiece
 end
 
 class Pawn < Piece
-  WHITE_DELTAS = [
-
-  ]
-
-  BLACK_DELTAS = [
-
-  ]
+  attr_reader :direction
 
   def initialize(color)
     super(color)
-    DELTAS = color == :black ? BLACK_DELTAS : WHITE_DELTAS
+    # DELTAS = color == :black ? BLACK_DELTAS : WHITE_DELTAS
+    @direction = color == :white ? -1 : 1
   end
 
   def move_dirs
@@ -163,11 +169,14 @@ class Pawn < Piece
   end
 
   def check_forward_moves
+    x, y = current_pos
+    forward_one = [x, y + direction]
+    forward_two = [x, y + (direction * 2)]
+
     forward_moves = []
-    x, y = current_pos[0], current_pos[1]
-    if  !hits_piece?([x, (y+1)])
-      forward_moves << [x, (y + 1)]
-      forward_moves << [x, (y + 2)] if first_move? && !hits_piece?([x, y+2])
+    unless hits_piece?(forward_one)
+      forward_moves << forward_one
+      forward_moves << forward_two if first_move? && !hits_piece?(forward_two)
     end
 
     forward_moves
@@ -175,13 +184,15 @@ class Pawn < Piece
 
   def check_diagonal_moves
     diagonal_moves = []
-    x, y = current_pos[0], current_pos[1]
+    x, y = current_pos
+    diagonal_left  = [x - direction, y + direction]
+    diagonal_right = [x + direction, y + direction]
 
-    right_diagonal = hits_piece?([x + 1, y+1])
-    left_diagonal = hits_piece?([x-1, y+1])
+    enemy_left = hits_piece?(diagonal_left)
+    enemy_right = hits_piece?(diagonal_left)
 
-    diagonal_moves << [x+1, y+1] if right_diagonal && right_diagonal != color
-    diagonal_moves << [x-1, y+1] if left_diagonal && left_diagonal != color
+    diagonal_moves << diagonal_right if enemy_right && enemy_right != color
+    diagonal_moves << diagonal_left  if enemy_left && enemy_left   != color
 
     diagonal_moves
   end
@@ -189,4 +200,5 @@ class Pawn < Piece
   def to_s
     color == :black ? " ♟ " : " ♙ "
   end
+
 end
