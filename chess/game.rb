@@ -1,5 +1,7 @@
+require 'byebug'
 require_relative 'board'
 require_relative 'display'
+require_relative 'HumanPlayer'
 
 class Game
 
@@ -18,6 +20,9 @@ class Game
     until board.checkmate?(:white) || board.checkmate?(:black)
       get_player_move
       switch_players!
+    end
+
+    puts "Game over."
   end
 
 
@@ -25,7 +30,12 @@ class Game
     attr_accessor :current_player
 
     def get_player_move
-      display.get_input
+      board_state = board.grid.flatten.to_s
+      until board_state != board.grid.flatten.to_s
+        # debugger
+        display.render
+        display.get_input
+      end
     end
 
     def switch_players!
@@ -35,10 +45,5 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   game = Game.new
-
-  result = nil
-  until result
-    game.run
-    result = game.display.get_input
-  end
+  game.run
 end

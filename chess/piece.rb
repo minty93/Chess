@@ -5,8 +5,9 @@ class Piece
   attr_reader :color # :board :current_pos
   attr_accessor :current_pos, :board
 
-  def initialize(color)
+  def initialize(color, current_pos)
     @color = color
+    @current_pos = current_pos
   end
 
   def moves(board, pos)
@@ -44,13 +45,11 @@ class Piece
     possible_moves = move_dirs
     possible_moves.reject! do |move|
       board_state = board.dup
-  
-      board_state[*move] = board_state[*current_pos]
-      board_state[*current_pos] = nil
+
+      board_state.move!(current_pos, move)
       board_state.in_check?(color)
     end
 
-    raise KingInCheckError if possible_moves.empty?
     possible_moves
   end
 end

@@ -24,6 +24,8 @@ class Board
 
     valid_piece?(start)
     possible_moves = self[*start].moves(self, start)
+    raise KingInCheckError if possible_moves.empty?
+    
     legal_move?(end_pos, possible_moves)
 
     self[*end_pos] = self[*start]
@@ -35,6 +37,11 @@ class Board
       puts "Cannot move piece to that position"
     rescue KingInCheckError => e
       puts "Your King will be in check"
+  end
+
+  def move!(start, end_pos)
+    self[*end_pos] = self[*start]
+    self[*start] = nil
   end
 
   def legal_move?(desired_move, possible_moves)
@@ -61,7 +68,7 @@ class Board
     return false unless in_check?(color)
     pieces = find_pieces(color)
     pieces.each do |piece_pos|
-      return false unless self[piece_pos].valid_moves.empty?
+      return false unless self[*piece_pos].valid_moves.empty?
     end
 
     true

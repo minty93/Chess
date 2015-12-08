@@ -22,6 +22,7 @@ class Pawn < Piece
 
   def check_forward_moves
     x, y = current_pos
+  
     forward_one = [x, y + direction]
     forward_two = [x, y + (direction * 2)]
 
