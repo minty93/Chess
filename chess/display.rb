@@ -26,7 +26,7 @@ class Display
       if piece
         piece.to_s.colorize(color_options)
       else
-        "     ".colorize(color_options)
+        "  ".colorize(color_options)
       end
     end
   end
