@@ -56,7 +56,20 @@ class Board
     opposing_moves.include?(king_pos)
   end
 
- private
+  def in_checkmate?(color)
+    return false unless in_check?(color)
+    pieces = find_pieces(color)
+    pieces.each do |piece_pos|
+      return false unless self[piece_pos].valid_moves.empty?
+    end
+
+    true
+  end
+
+
+  # private
+    attr_writer :grid
+
     def find_king(color)
       grid.each.with_index do |row, i|
         row.each.with_index do |pos, j|
@@ -106,6 +119,15 @@ class Board
         Knight.new(color),
         Rook.new(color)
       ]
+    end
+
+    def dup
+      dup_board = Board.new
+      dup_board.grid = grid.map do |row|
+        row.map { |pos| pos.nil? ? nil : pos.dup }
+      end
+
+      dup_board
     end
 
 end

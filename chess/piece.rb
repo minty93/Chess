@@ -14,11 +14,6 @@ class Piece
     move_dirs
   end
 
-
-  def to_s
-    self.class.to_s[0..2]
-  end
-
   def hits_piece?(move)
     board.in_bounds?(move)
 
@@ -39,5 +34,11 @@ class Piece
 
   def inspect
     to_s
+  end
+
+  def valid_moves
+    possible_moves = move_dirs
+
+
   end
 end
