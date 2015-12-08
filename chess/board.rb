@@ -25,7 +25,7 @@ class Board
     valid_piece?(start)
     possible_moves = self[*start].moves(self, start)
     raise KingInCheckError if possible_moves.empty?
-    
+
     legal_move?(end_pos, possible_moves)
 
     self[*end_pos] = self[*start]
@@ -111,8 +111,8 @@ class Board
 
     def populate
       8.times do |j|
-        self[j, 1] = Pawn.new(:black)
-        self[j, 6] = Pawn.new(:white)
+        self[j, 1] = Pawn.new(:black, self, [j, 1])
+        self[j, 6] = Pawn.new(:white, self, [j, 6])
       end
 
       @grid[0] = populate_pieces(:black, 0)
@@ -121,14 +121,14 @@ class Board
 
     def populate_pieces(color, row)
       [
-        Rook.new(color),
-        Knight.new(color),
-        Bishop.new(color),
-        Queen.new(color),
-        King.new(color),
-        Bishop.new(color),
-        Knight.new(color),
-        Rook.new(color)
+        Rook.new(color, self, [0, row]),
+        Knight.new(color, self, [1, row]),
+        Bishop.new(color, self, [2, row]),
+        Queen.new(color, self, [3, row]),
+        King.new(color, self, [4, row]),
+        Bishop.new(color, self, [5, row]),
+        Knight.new(color, self, [6, row]),
+        Rook.new(color, self, [7, row])
       ]
     end
 

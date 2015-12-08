@@ -21,7 +21,7 @@ class Game
       get_player_move
       switch_players!
     end
-
+    display.render
     puts "Game over."
   end
 

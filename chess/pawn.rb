@@ -3,8 +3,8 @@ require_relative 'piece'
 class Pawn < Piece
   attr_reader :direction
 
-  def initialize(color)
-    super(color)
+  def initialize(color, board, pos)
+    super(color, board, pos)
     # DELTAS = color == :black ? BLACK_DELTAS : WHITE_DELTAS
     @direction = color == :white ? -1 : 1
   end
@@ -22,7 +22,7 @@ class Pawn < Piece
 
   def check_forward_moves
     x, y = current_pos
-  
+
     forward_one = [x, y + direction]
     forward_two = [x, y + (direction * 2)]
 
